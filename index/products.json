@@ -1,0 +1,602 @@
+{
+  "settings": {
+    "index": {
+      "number_of_shards": 3,
+      "number_of_replicas": 1,
+      "refresh_interval": "1s",
+      "max_ngram_diff": 13
+    },
+    "analysis": {
+      "filter": {
+        "edge_ngram_filter": {
+          "type": "edge_ngram",
+          "min_gram": 2,
+          "max_gram": 15
+        },
+        "ngram_filter": {
+          "type": "ngram",
+          "min_gram": 3,
+          "max_gram": 15
+        }
+      },
+      "analyzer": {
+        "sku_analyzer": {
+          "type": "custom",
+          "tokenizer": "keyword",
+          "filter": [
+            "lowercase"
+          ]
+        },
+        "product_text_analyzer": {
+          "type": "custom",
+          "tokenizer": "standard",
+          "filter": [
+            "lowercase",
+            "edge_ngram_filter"
+          ]
+        },
+        "product_text_search": {
+          "type": "custom",
+          "tokenizer": "standard",
+          "filter": [
+            "lowercase"
+          ]
+        },
+        "ngram_analyzer": {
+          "type": "custom",
+          "tokenizer": "standard",
+          "filter": [
+            "lowercase",
+            "ngram_filter"
+          ]
+        },
+        "search_analyzer": {
+          "type": "custom",
+          "tokenizer": "standard",
+          "filter": [
+            "lowercase"
+          ]
+        }
+      }
+    }
+  },
+  "mappings": {
+    "properties": {
+      "_deleted": {
+        "type": "boolean"
+      },
+      "_deletedAt": {
+        "type": "date",
+        "format": "epoch_millis"
+      },
+      "attributes": {
+        "type": "nested",
+        "properties": {
+          "comparable": {
+            "type": "boolean"
+          },
+          "displayable": {
+            "type": "boolean"
+          },
+          "facetable": {
+            "type": "boolean"
+          },
+          "identifier": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword"
+              }
+            }
+          },
+          "name": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword"
+              }
+            }
+          },
+          "searchable": {
+            "type": "boolean"
+          },
+          "sequence": {
+            "type": "double",
+            "coerce": true
+          },
+          "storeDisplay": {
+            "type": "boolean"
+          },
+          "uniqueID": {
+            "type": "keyword"
+          },
+          "usage": {
+            "type": "keyword"
+          },
+          "values": {
+            "type": "nested",
+            "properties": {
+              "identifier": {
+                "type": "text",
+                "fields": {
+                  "keyword": {
+                    "type": "keyword"
+                  }
+                },
+                "analyzer": "product_text_analyzer",
+                "search_analyzer": "product_text_search"
+              },
+              "sequence": {
+                "type": "double",
+                "coerce": true
+              },
+              "uniqueID": {
+                "type": "keyword"
+              },
+              "unitID": {
+                "type": "keyword"
+              },
+              "unitOfMeasure": {
+                "type": "keyword"
+              },
+              "value": {
+                "type": "text",
+                "fields": {
+                  "keyword": {
+                    "type": "keyword"
+                  }
+                },
+                "analyzer": "product_text_analyzer",
+                "search_analyzer": "product_text_search"
+              }
+            }
+          }
+        }
+      },
+      "attachments": {
+        "type": "nested",
+        "properties": {
+          "identifier": {
+            "type": "keyword"
+          },
+          "catentry_id": {
+            "type": "keyword"
+          },
+          "usage": {
+            "type": "keyword"
+          },
+          "name": {
+            "type": "keyword"
+          },
+          "shortdesc": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword"
+              }
+            }
+          },
+          "attachmentAssetID": {
+            "type": "keyword"
+          },
+          "mimeType": {
+            "type": "keyword"
+          },
+          "attachmentAssetPath": {
+            "type": "keyword",
+            "index": false
+          },
+          "image": {
+            "type": "keyword",
+            "index": false
+          }
+        }
+      },
+      "buyable": {
+        "type": "keyword"
+      },
+      "catalogEntryTypeCode": {
+        "type": "keyword"
+      },
+      "cdcOperation": {
+        "type": "keyword"
+      },
+      "cdcTimestamp": {
+        "type": "date",
+        "format": "epoch_millis"
+      },
+      "fullImage": {
+        "type": "keyword",
+        "index": false
+      },
+      "hasSingleSKU": {
+        "type": "boolean"
+      },
+      "indexedAt": {
+        "type": "date",
+        "format": "epoch_millis"
+      },
+      "manufacturer": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "merchandisingAssociations": {
+        "type": "nested",
+        "properties": {
+          "uniqueID": {
+            "type": "keyword"
+          },
+          "partNumber": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword"
+              }
+            }
+          },
+          "name": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword"
+              }
+            }
+          },
+          "shortDescription": {
+            "type": "text"
+          },
+          "description": {
+            "type": "text"
+          },
+          "thumbnail": {
+            "type": "keyword",
+            "index": false
+          },
+          "buyable": {
+            "type": "keyword"
+          },
+          "storeID": {
+            "type": "keyword"
+          },
+          "manufacturer": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword"
+              }
+            }
+          },
+          "parentCatalogGroupID": {
+            "type": "keyword"
+          },
+          "catalogEntryTypeCode": {
+            "type": "keyword"
+          },
+          "resourceId": {
+            "type": "keyword",
+            "index": false
+          },
+          "hasSingleSKU": {
+            "type": "boolean"
+          },
+          "price_USD": {
+            "type": "double",
+            "coerce": true
+          },
+          "quantity": {
+            "type": "integer"
+          },
+          "associationType": {
+            "type": "keyword"
+          },
+          "price": {
+            "type": "nested",
+            "properties": {
+              "currency": {
+                "type": "keyword"
+              },
+              "description": {
+                "type": "keyword"
+              },
+              "usage": {
+                "type": "keyword"
+              },
+              "value": {
+                "type": "keyword"
+              }
+            }
+          },
+          "attributes": {
+            "type": "nested",
+            "properties": {
+              "identifier": {
+                "type": "text",
+                "fields": {
+                  "keyword": {
+                    "type": "keyword"
+                  }
+                }
+              },
+              "name": {
+                "type": "text",
+                "fields": {
+                  "keyword": {
+                    "type": "keyword"
+                  }
+                }
+              },
+              "usage": {
+                "type": "keyword"
+              },
+              "uniqueID": {
+                "type": "keyword"
+              },
+              "sequence": {
+                "type": "double",
+                "coerce": true
+              },
+              "displayable": {
+                "type": "boolean"
+              },
+              "facetable": {
+                "type": "boolean"
+              },
+              "comparable": {
+                "type": "boolean"
+              },
+              "searchable": {
+                "type": "boolean"
+              },
+              "storeDisplay": {
+                "type": "boolean"
+              },
+              "values": {
+                "type": "nested",
+                "properties": {
+                  "identifier": {
+                    "type": "text",
+                    "fields": {
+                      "keyword": {
+                        "type": "keyword"
+                      }
+                    }
+                  },
+                  "value": {
+                    "type": "text",
+                    "fields": {
+                      "keyword": {
+                        "type": "keyword"
+                      }
+                    }
+                  },
+                  "uniqueID": {
+                    "type": "keyword"
+                  },
+                  "unitID": {
+                    "type": "keyword"
+                  },
+                  "unitOfMeasure": {
+                    "type": "keyword"
+                  },
+                  "sequence": {
+                    "type": "double",
+                    "coerce": true
+                  }
+                }
+              }
+            }
+          },
+          "attachments": {
+            "type": "nested",
+            "properties": {
+              "identifier": {
+                "type": "keyword"
+              },
+              "catentry_id": {
+                "type": "keyword"
+              },
+              "usage": {
+                "type": "keyword"
+              },
+              "name": {
+                "type": "keyword"
+              },
+              "shortdesc": {
+                "type": "text",
+                "fields": {
+                  "keyword": {
+                    "type": "keyword"
+                  }
+                }
+              },
+              "attachmentAssetID": {
+                "type": "keyword"
+              },
+              "mimeType": {
+                "type": "keyword"
+              },
+              "attachmentAssetPath": {
+                "type": "keyword",
+                "index": false
+              },
+              "image": {
+                "type": "keyword",
+                "index": false
+              }
+            }
+          }
+        }
+      },
+      "mfPartNumber_ntk": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        },
+        "analyzer": "sku_analyzer"
+      },
+      "name": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        },
+        "analyzer": "product_text_analyzer",
+        "search_analyzer": "product_text_search"
+      },
+      "parentCatalogEntryID": {
+        "type": "keyword"
+      },
+      "parentCatalogGroupID": {
+        "type": "keyword"
+      },
+      "partNumber": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        },
+        "analyzer": "sku_analyzer"
+      },
+      "price": {
+        "type": "nested",
+        "properties": {
+          "currency": {
+            "type": "keyword"
+          },
+          "description": {
+            "type": "keyword"
+          },
+          "usage": {
+            "type": "keyword"
+          },
+          "value": {
+            "type": "keyword"
+          }
+        }
+      },
+      "price_USD": {
+        "type": "double",
+        "coerce": true
+      },
+      "resourceId": {
+        "type": "keyword",
+        "index": false
+      },
+      "searchableText": {
+        "type": "text",
+        "analyzer": "ngram_analyzer",
+        "search_analyzer": "search_analyzer"
+      },
+      "shortDescription": {
+        "type": "text",
+        "analyzer": "product_text_analyzer",
+        "search_analyzer": "product_text_search"
+      },
+      "singleSKUCatalogEntryID": {
+        "type": "keyword"
+      },
+      "sequenceAssignments": {
+        "type": "nested",
+        "properties": {
+          "catalogId": {
+            "type": "keyword"
+          },
+          "pathCategoryIds": {
+            "type": "keyword"
+          },
+          "leafCategoryId": {
+            "type": "keyword"
+          },
+          "sortToken": {
+            "type": "keyword"
+          }
+        }
+      },
+      "startDate": {
+        "type": "date",
+        "format": "date_optional_time||EEE MMM dd HH:mm:ss zzz yyyy||epoch_millis"
+      },
+      "storeID": {
+        "type": "keyword"
+      },
+      "thumbnail": {
+        "type": "keyword",
+        "index": false
+      },
+      "uniqueID": {
+        "type": "keyword"
+      },
+      "field1": {
+        "type": "keyword"
+      },
+      "field2": {
+        "type": "keyword"
+      },
+      "field3": {
+        "type": "keyword"
+      },
+      "field5": {
+        "type": "keyword"
+      },
+      "uom": {
+        "type": "keyword"
+      },
+      "defaultProductClass": {
+        "type": "keyword"
+      },
+      "uniqueIDTest": {
+        "type": "keyword"
+      },
+      "UnitWidth": {
+        "type": "double",
+        "coerce": true
+      },
+      "UnitLength": {
+        "type": "double",
+        "coerce": true
+      },
+      "UnitHeight": {
+        "type": "double",
+        "coerce": true
+      },
+      "UnitWeight": {
+        "type": "double",
+        "coerce": true
+      },
+      "UnitWeightUOM": {
+        "type": "keyword"
+      },
+      "SinglePack": {
+        "type": "keyword"
+      },
+      "StandardPack": {
+        "type": "double",
+        "coerce": true
+      },
+      "primarySupplier": {
+        "type": "keyword"
+      },
+      "status": {
+        "type": "keyword"
+      },
+      "currency": {
+        "type": "keyword"
+      },
+      "description": {
+        "type": "text"
+      },
+      "addonEnrichedAt": {
+        "type": "date",
+        "format": "epoch_millis"
+      }
+    }
+  }
+}

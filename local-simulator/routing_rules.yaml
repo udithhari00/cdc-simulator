@@ -1,0 +1,101 @@
+topic_prefix: "local-cdc"
+schema: "STERLING"
+
+# Config-driven mappings: table -> topic -> lambda folder -> target index
+mappings:
+  - table: "YFS_CUSTOMER"
+    topic: "local-cdc.STERLING.YFS_CUSTOMER"
+    processor: "cdc-customer-processor"
+    primary_key: "CUSTOMER_KEY"
+    target_index: "organizations"
+
+  - table: "YFS_CUSTOMER_ADDNL_ADDRESS"
+    topic: "local-cdc.STERLING.YFS_CUSTOMER_ADDNL_ADDRESS"
+    processor: "cdc-customeraddnladdress-processor"
+    primary_key: "CUSTOMER_ADDNL_ADDRESS_KEY"
+    target_index: "organizations"
+
+  - table: "YFS_CUSTOMER_CONTACT"
+    topic: "local-cdc.STERLING.YFS_CUSTOMER_CONTACT"
+    processor: "cdc-customercontact-processor"
+    primary_key: "CUSTOMER_CONTACT_KEY"
+    target_index: "organizations"
+
+  - table: "YFS_ORDER_HEADER"
+    topic: "local-cdc.STERLING.YFS_ORDER_HEADER"
+    processor: "cdc-orderheader-processor"
+    primary_key: "ORDER_HEADER_KEY"
+    target_index: "orders"
+
+  - table: "YFS_ORDER_HOLD_TYPE"
+    topic: "local-cdc.STERLING.YFS_ORDER_HOLD_TYPE"
+    processor: "cdc-orderholdtype-processor"
+    primary_key: "ORDER_HOLD_TYPE_KEY"
+    target_index: "orders"
+
+  - table: "YFS_ORDER_INVOICE"
+    topic: "local-cdc.STERLING.YFS_ORDER_INVOICE"
+    processor: "cdc-orderinvoice-processor"
+    primary_key: "ORDER_INVOICE_KEY"
+    target_index: "orders"
+
+  - table: "YFS_ORDER_LINE"
+    topic: "local-cdc.STERLING.YFS_ORDER_LINE"
+    processor: "cdc-orderline-processor"
+    primary_key: "ORDER_LINE_KEY"
+    target_index: "order-lines"
+
+  - table: "YFS_ORDER_STATUS"
+    topic: "local-cdc.STERLING.YFS_ORDER_STATUS"
+    processor: "cdc-orderstatus-processor"
+    primary_key: "ORDER_HEADER_KEY"
+    target_index: "orders"
+
+  - table: "YFS_ORGANIZATION"
+    topic: "local-cdc.STERLING.YFS_ORGANIZATION"
+    processor: "cdc-organization-processor"
+    primary_key: "ORGANIZATION_KEY"
+    target_index: "organizations"
+
+  - table: "YFS_PERSON_INFO"
+    topic: "local-cdc.STERLING.YFS_PERSON_INFO"
+    processor: "cdc-personinfo-processor"
+    primary_key: "PERSON_INFO_KEY"
+    target_index: "orders"
+
+  - table: "YFS_SHIPMENT"
+    topic: "local-cdc.STERLING.YFS_SHIPMENT"
+    processor: "cdc-shipment-processor"
+    primary_key: "SHIPMENT_KEY"
+    target_index: "orders"
+
+  - table: "YFS_SHIPMENT_CONTAINER"
+    topic: "local-cdc.STERLING.YFS_SHIPMENT_CONTAINER"
+    processor: "cdc-shipmentcontainer-processor"
+    primary_key: "SHIPMENT_CONTAINER_KEY"
+    target_index: null
+
+  - table: "YFS_SHIPMENT_LINE"
+    topic: "local-cdc.STERLING.YFS_SHIPMENT_LINE"
+    processor: "cdc-shipmentline-processor"
+    primary_key: "SHIPMENT_LINE_KEY"
+    target_index: null
+
+  - table: "YFS_CONTAINER_DETAILS"
+    topic: "local-cdc.STERLING.YFS_CONTAINER_DETAILS"
+    processor: "cdc-containerdetails-processor"
+    primary_key: "CONTAINER_DETAILS_KEY"
+    target_index: null
+
+  - table: "PRODUCT"
+    topic: "local-cdc.STERLING.PRODUCT"
+    processor: "cdc-product-processor"
+    primary_key: "uniqueID"
+    target_index: "products"
+
+  - table: "PRODUCT_ADDON"
+    topic: "local-cdc.STERLING.PRODUCT_ADDON"
+    processor: "cdc-product-addon-processor"
+    primary_key: "uniqueID"
+    target_index: "products"
+

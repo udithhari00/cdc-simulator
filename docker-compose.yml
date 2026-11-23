@@ -1,0 +1,158 @@
+services:
+  # ==========================================================
+  # OpenSearch 3.x Search Engine
+  # ==========================================================
+  opensearch:
+    image: opensearchproject/opensearch:latest
+    container_name: opensearch-local
+    environment:
+      - cluster.name=opensearch-cluster
+      - node.name=opensearch-node
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m"
+      - DISABLE_SECURITY_PLUGIN=true
+      - OPENSEARCH_INITIAL_ADMIN_PASSWORD=Admin_Demo123!
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    ports:
+      - "9200:9200"
+      - "9600:9600"
+    volumes:
+      - opensearch-data:/usr/share/opensearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s http://localhost:9200 >/dev/null || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # ==========================================================
+  # OpenSearch Dashboards 3.x UI
+  # ==========================================================
+  opensearch-dashboards:
+    image: opensearchproject/opensearch-dashboards:latest
+    container_name: opensearch-dashboards-local
+    ports:
+      - "5601:5601"
+    environment:
+      - OPENSEARCH_HOSTS=["http://opensearch:9200"]
+      - DISABLE_SECURITY_DASHBOARDS_PLUGIN=true
+    depends_on:
+      opensearch:
+        condition: service_healthy
+
+  # ==========================================================
+  # DynamoDB Local (Stores enrichment_cache table)
+  # ==========================================================
+  dynamodb-local:
+    image: amazon/dynamodb-local:latest
+    container_name: dynamodb-local
+    command: "-jar DynamoDBLocal.jar -sharedDb -inMemory"
+    ports:
+      - "8000:8000"
+
+  # ==========================================================
+  # Kafka Broker (Apache Kafka KRaft Mode - No Zookeeper)
+  # ==========================================================
+  kafka:
+    image: apache/kafka:3.7.0
+    container_name: kafka-local
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093,PLAINTEXT_HOST://0.0.0.0:29092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+
+  # ==========================================================
+  # Kafka UI (Visual inspector for topics & CDC messages)
+  # ==========================================================
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui-local
+    ports:
+      - "8085:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local-cluster
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+    depends_on:
+      - kafka
+
+  # ==========================================================
+  # Ingestion Simulator Service & CDC Consumer Worker
+  # ==========================================================
+  ingestion-service:
+    build:
+      context: .
+      dockerfile: local-simulator/Dockerfile
+    container_name: ingestion-service
+    ports:
+      - "8001:8001"
+    environment:
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - OPENSEARCH_HOST=opensearch
+      - OPENSEARCH_PORT=9200
+      - OPENSEARCH_SCHEME=http
+      - OPENSEARCH_AUTH=basic
+      - OPENSEARCH_USERNAME=admin
+      - OPENSEARCH_PASSWORD=admin
+      - OPENSEARCH_MODE=provisioned
+      - DYNAMODB_ENDPOINT=http://dynamodb-local:8000
+      - DYNAMODB_TABLE=enrichment_cache
+      - AWS_REGION=us-east-1
+      - AWS_ACCESS_KEY_ID=local
+      - AWS_SECRET_ACCESS_KEY=local
+      - ROUTING_RULES_PATH=/app/local-simulator/routing_rules.yaml
+      - INDEX_DIR=/app/index
+      - LAMBDAS_DIR=/app/lambdas
+    volumes:
+      - ./local-simulator:/app/local-simulator
+      - ./lambdas:/app/lambdas
+      - ./index:/app/index
+    depends_on:
+      opensearch:
+        condition: service_healthy
+      dynamodb-local:
+        condition: service_started
+      kafka:
+        condition: service_started
+
+  # # ==========================================================
+  # # Client API Contracts Dummy Backend
+  # # ==========================================================
+  # dummy-backend:
+  #   build:
+  #     context: ./dummy-backend
+  #     dockerfile: Dockerfile
+  #   container_name: dummy-backend
+  #   ports:
+  #     - "8080:8080"
+  #   environment:
+  #     - OPENSEARCH_HOST=opensearch
+  #     - OPENSEARCH_PORT=9200
+  #     - OPENSEARCH_SCHEME=http
+  #     - OPENSEARCH_AUTH=basic
+  #   volumes:
+  #     - ./dummy-backend:/app
+  #   depends_on:
+  #     opensearch:
+  #       condition: service_healthy
+
+volumes:
+  opensearch-data:
+

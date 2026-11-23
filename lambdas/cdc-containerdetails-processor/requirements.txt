@@ -1,0 +1,10 @@
+# ── AWS ──────────────────────────────────────────────────────────────────────
+boto3==1.34.0                    # AWS SDK — DynamoDB access, credentials, IAM auth
+botocore==1.34.0                 # Core dependency of boto3 (pin to same minor)
+
+# ── OpenSearch ────────────────────────────────────────────────────────────────
+opensearch-py==2.4.2             # OpenSearch client — order-lines index updates
+
+# ── Testing ───────────────────────────────────────────────────────────────────
+pytest==8.2.0                    # Test runner
+pytest-cov==5.0.0                # Coverage reporting (--cov flag)

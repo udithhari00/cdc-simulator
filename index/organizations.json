@@ -1,0 +1,1176 @@
+{
+  "settings": {
+    "index": {
+      "number_of_shards": 3,
+      "number_of_replicas": 1,
+      "refresh_interval": "1s",
+      "max_ngram_diff": 14
+    },
+    "analysis": {
+      "tokenizer": {
+        "ngram_tokenizer": {
+          "type": "ngram",
+          "min_gram": 3,
+          "max_gram": 17,
+          "token_chars": [
+            "letter",
+            "digit"
+          ]
+        },
+        "edge_ngram_tokenizer": {
+          "type": "edge_ngram",
+          "min_gram": 2,
+          "max_gram": 16,
+          "token_chars": [
+            "letter",
+            "digit"
+          ]
+        }
+      },
+      "analyzer": {
+        "ngram_analyzer": {
+          "type": "custom",
+          "tokenizer": "ngram_tokenizer",
+          "filter": [
+            "lowercase"
+          ]
+        },
+        "edge_ngram_analyzer": {
+          "type": "custom",
+          "tokenizer": "edge_ngram_tokenizer",
+          "filter": [
+            "lowercase"
+          ]
+        },
+        "search_analyzer": {
+          "type": "custom",
+          "tokenizer": "standard",
+          "filter": [
+            "lowercase"
+          ]
+        },
+        "phone_analyzer": {
+          "type": "custom",
+          "tokenizer": "keyword",
+          "char_filter": [
+            "phone_char_filter"
+          ],
+          "filter": [
+            "lowercase"
+          ]
+        },
+        "email_analyzer": {
+          "type": "custom",
+          "tokenizer": "uax_url_email",
+          "filter": [
+            "lowercase"
+          ]
+        }
+      },
+      "char_filter": {
+        "phone_char_filter": {
+          "type": "pattern_replace",
+          "pattern": "[^0-9]",
+          "replacement": ""
+        }
+      },
+      "normalizer": {
+        "lowercase_normalizer": {
+          "type": "custom",
+          "filter": [
+            "lowercase",
+            "asciifolding"
+          ]
+        }
+      }
+    }
+  },
+  "mappings": {
+    "properties": {
+      "_deleted": {
+        "type": "boolean"
+      },
+      "_deletedAt": {
+        "type": "date",
+        "format": "epoch_millis"
+      },
+      "accountWithHub": {
+        "type": "keyword"
+      },
+      "activateFlag": {
+        "type": "keyword"
+      },
+      "address": {
+        "properties": {
+          "addressHash": {
+            "type": "keyword",
+            "index": false
+          },
+          "addressLine1": {
+            "type": "text"
+          },
+          "addressLine2": {
+            "type": "text"
+          },
+          "addressLine3": {
+            "type": "text"
+          },
+          "addressLine4": {
+            "type": "text"
+          },
+          "addressLine5": {
+            "type": "text"
+          },
+          "addressLine6": {
+            "type": "text"
+          },
+          "city": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "normalizer": "lowercase_normalizer"
+              }
+            }
+          },
+          "company": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "normalizer": "lowercase_normalizer"
+              }
+            }
+          },
+          "country": {
+            "type": "keyword"
+          },
+          "dayPhone": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword"
+              },
+              "normalized": {
+                "type": "text",
+                "analyzer": "phone_analyzer"
+              }
+            }
+          },
+          "emailId": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "normalizer": "lowercase_normalizer"
+              },
+              "ngram": {
+                "type": "text",
+                "analyzer": "ngram_analyzer",
+                "search_analyzer": "search_analyzer"
+              }
+            },
+            "analyzer": "email_analyzer"
+          },
+          "eveningPhone": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword"
+              },
+              "normalized": {
+                "type": "text",
+                "analyzer": "phone_analyzer"
+              }
+            }
+          },
+          "firstName": {
+            "type": "keyword"
+          },
+          "fullName": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "normalizer": "lowercase_normalizer"
+              },
+              "ngram": {
+                "type": "text",
+                "analyzer": "ngram_analyzer",
+                "search_analyzer": "search_analyzer"
+              }
+            }
+          },
+          "lastName": {
+            "type": "keyword"
+          },
+          "mobilePhone": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword"
+              },
+              "normalized": {
+                "type": "text",
+                "analyzer": "phone_analyzer"
+              }
+            }
+          },
+          "state": {
+            "type": "keyword"
+          },
+          "zipCode": {
+            "type": "keyword"
+          }
+        }
+      },
+      "authorityType": {
+        "type": "keyword"
+      },
+      "billTo": {
+        "properties": {
+          "addressLine1": {
+            "type": "text"
+          },
+          "addressLine2": {
+            "type": "text"
+          },
+          "addressLine3": {
+            "type": "text"
+          },
+          "addressLine4": {
+            "type": "text"
+          },
+          "addressLine5": {
+            "type": "text"
+          },
+          "addressLine6": {
+            "type": "text"
+          },
+          "city": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "normalizer": "lowercase_normalizer"
+              }
+            }
+          },
+          "company": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "normalizer": "lowercase_normalizer"
+              }
+            }
+          },
+          "country": {
+            "type": "keyword"
+          },
+          "dayPhone": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword"
+              },
+              "normalized": {
+                "type": "text",
+                "analyzer": "phone_analyzer"
+              }
+            }
+          },
+          "emailId": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "normalizer": "lowercase_normalizer"
+              },
+              "ngram": {
+                "type": "text",
+                "analyzer": "ngram_analyzer",
+                "search_analyzer": "search_analyzer"
+              }
+            },
+            "analyzer": "email_analyzer"
+          },
+          "eveningPhone": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword"
+              },
+              "normalized": {
+                "type": "text",
+                "analyzer": "phone_analyzer"
+              }
+            }
+          },
+          "firstName": {
+            "type": "keyword"
+          },
+          "fullName": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "normalizer": "lowercase_normalizer"
+              },
+              "ngram": {
+                "type": "text",
+                "analyzer": "ngram_analyzer",
+                "search_analyzer": "search_analyzer"
+              }
+            }
+          },
+          "lastName": {
+            "type": "keyword"
+          },
+          "mobilePhone": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword"
+              },
+              "normalized": {
+                "type": "text",
+                "analyzer": "phone_analyzer"
+              }
+            }
+          },
+          "personInfoKey": {
+            "type": "keyword"
+          },
+          "state": {
+            "type": "keyword"
+          },
+          "zipCode": {
+            "type": "keyword"
+          }
+        }
+      },
+      "billingAddressKey": {
+        "type": "keyword"
+      },
+      "catalogOrganizationCode": {
+        "type": "keyword"
+      },
+      "cdcOperation": {
+        "type": "keyword"
+      },
+      "cdcTimestamp": {
+        "type": "date",
+        "format": "epoch_millis"
+      },
+      "contact": {
+        "properties": {
+          "addressLine1": {
+            "type": "text"
+          },
+          "addressLine2": {
+            "type": "text"
+          },
+          "addressLine3": {
+            "type": "text"
+          },
+          "addressLine4": {
+            "type": "text"
+          },
+          "addressLine5": {
+            "type": "text"
+          },
+          "addressLine6": {
+            "type": "text"
+          },
+          "city": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "normalizer": "lowercase_normalizer"
+              }
+            }
+          },
+          "company": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "normalizer": "lowercase_normalizer"
+              }
+            }
+          },
+          "contactHash": {
+            "type": "keyword",
+            "index": false
+          },
+          "country": {
+            "type": "keyword"
+          },
+          "dayPhone": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword"
+              },
+              "normalized": {
+                "type": "text",
+                "analyzer": "phone_analyzer"
+              }
+            }
+          },
+          "email": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "normalizer": "lowercase_normalizer"
+              },
+              "ngram": {
+                "type": "text",
+                "analyzer": "ngram_analyzer",
+                "search_analyzer": "search_analyzer"
+              }
+            },
+            "analyzer": "email_analyzer"
+          },
+          "eveningPhone": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword"
+              },
+              "normalized": {
+                "type": "text",
+                "analyzer": "phone_analyzer"
+              }
+            }
+          },
+          "firstName": {
+            "type": "keyword"
+          },
+          "fullName": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "normalizer": "lowercase_normalizer"
+              },
+              "ngram": {
+                "type": "text",
+                "analyzer": "ngram_analyzer",
+                "search_analyzer": "search_analyzer"
+              }
+            }
+          },
+          "lastName": {
+            "type": "keyword"
+          },
+          "mobilePhone": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword"
+              },
+              "normalized": {
+                "type": "text",
+                "analyzer": "phone_analyzer"
+              }
+            }
+          },
+          "phone": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword"
+              },
+              "normalized": {
+                "type": "text",
+                "analyzer": "phone_analyzer"
+              }
+            }
+          },
+          "state": {
+            "type": "keyword"
+          },
+          "zipCode": {
+            "type": "keyword"
+          }
+        }
+      },
+      "contactAddressKey": {
+        "type": "keyword"
+      },
+      "contactDepartment": {
+        "type": "keyword"
+      },
+      "contactJobTitle": {
+        "type": "keyword"
+      },
+      "contactType": {
+        "type": "keyword"
+      },
+      "corporateAddressKey": {
+        "type": "keyword"
+      },
+      "createdTimestamp": {
+        "type": "date",
+        "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd'T'HH:mm:ss||epoch_millis"
+      },
+      "creatorOrganizationKey": {
+        "type": "keyword"
+      },
+      "customer": {
+        "properties": {
+          "customerClassificationCode": {
+            "type": "keyword"
+          },
+          "customerHash": {
+            "type": "keyword",
+            "index": false
+          },
+          "customerId": {
+            "type": "keyword"
+          },
+          "customerKey": {
+            "type": "keyword"
+          },
+          "customerLevel": {
+            "type": "keyword"
+          },
+          "customerRegisteredDate": {
+            "type": "date",
+            "format": "epoch_millis"
+          },
+          "customerRelationshipType": {
+            "type": "keyword"
+          },
+          "customerRewardsNo": {
+            "type": "keyword"
+          },
+          "customerStatus": {
+            "type": "keyword"
+          },
+          "customerType": {
+            "type": "keyword"
+          },
+          "customerVertical": {
+            "type": "keyword"
+          },
+          "externalCustomerId": {
+            "type": "keyword"
+          },
+          "extnAutoRenewPartnership": {
+            "type": "keyword"
+          },
+          "extnEligiblePaymentMethods": {
+            "type": "keyword"
+          },
+          "extnNonPfasRequired": {
+            "type": "keyword"
+          },
+          "extnPartnershipExpirationDate": {
+            "type": "date",
+            "format": "epoch_millis"
+          },
+          "extnPartnershipLevel": {
+            "type": "keyword"
+          },
+          "extnPartnershipOgStartDate": {
+            "type": "date",
+            "format": "epoch_millis"
+          },
+          "extnPartnershipStartDate": {
+            "type": "date",
+            "format": "epoch_millis"
+          }
+        }
+      },
+      "customerContact": {
+        "properties": {
+          "contactCompany": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "normalizer": "lowercase_normalizer"
+              }
+            }
+          },
+          "contactDepartment": {
+            "type": "keyword"
+          },
+          "contactDob": {
+            "type": "date",
+            "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd'T'HH:mm:ss||epoch_millis||yyyy-MM-dd||epoch_second"
+          },
+          "contactEmail": {
+            "type": "text",
+            "analyzer": "email_analyzer",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "normalizer": "lowercase_normalizer"
+              },
+              "ngram": {
+                "type": "text",
+                "analyzer": "ngram_analyzer",
+                "search_analyzer": "search_analyzer"
+              }
+            }
+          },
+          "contactJobTitle": {
+            "type": "keyword"
+          },
+          "contactName": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "normalizer": "lowercase_normalizer"
+              },
+              "ngram": {
+                "type": "text",
+                "analyzer": "ngram_analyzer",
+                "search_analyzer": "search_analyzer"
+              }
+            }
+          },
+          "contactPhone": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword"
+              },
+              "normalized": {
+                "type": "text",
+                "analyzer": "phone_analyzer"
+              }
+            }
+          },
+          "contactType": {
+            "type": "keyword"
+          },
+          "customerContactKey": {
+            "type": "keyword"
+          },
+          "statementEmail": {
+            "type": "text",
+            "analyzer": "email_analyzer",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "normalizer": "lowercase_normalizer"
+              },
+              "ngram": {
+                "type": "text",
+                "analyzer": "ngram_analyzer",
+                "search_analyzer": "search_analyzer"
+              }
+            }
+          }
+        }
+      },
+      "defaultDistributionRuleId": {
+        "type": "keyword"
+      },
+      "defaultFulfillmentType": {
+        "type": "keyword"
+      },
+      "defaultPriceProgramKey": {
+        "type": "keyword"
+      },
+      "dunsNumber": {
+        "type": "keyword"
+      },
+      "extnAplusCustomerId": {
+        "type": "keyword",
+        "copy_to": [
+          "searchableText"
+        ]
+      },
+      "extnDefaultCarrier": {
+        "type": "keyword"
+      },
+      "extnDefaultCarrierService": {
+        "type": "keyword"
+      },
+      "extnDefaultFreightTerms": {
+        "type": "keyword"
+      },
+      "extnExportCustomer": {
+        "type": "keyword"
+      },
+      "extnExternalPrintNote": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "extnFob": {
+        "type": "keyword"
+      },
+      "extnImportVendor": {
+        "type": "keyword"
+      },
+      "extnInsideSalesRep": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "normalizer": "lowercase_normalizer"
+          },
+          "ngram": {
+            "type": "text",
+            "analyzer": "ngram_analyzer",
+            "search_analyzer": "search_analyzer"
+          }
+        },
+        "copy_to": [
+          "searchableText"
+        ]
+      },
+      "extnInternalNote": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "extnMarketSegment": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "normalizer": "lowercase_normalizer"
+          },
+          "ngram": {
+            "type": "text",
+            "analyzer": "ngram_analyzer",
+            "search_analyzer": "search_analyzer"
+          }
+        }
+      },
+      "extnNaftaRequired": {
+        "type": "keyword"
+      },
+      "extnNotificationType": {
+        "type": "keyword"
+      },
+      "extnPaymentTermDesc": {
+        "type": "keyword"
+      },
+      "extnPaymentTerms": {
+        "type": "keyword"
+      },
+      "extnPbCarrierCode": {
+        "type": "keyword"
+      },
+      "extnPreferredDc": {
+        "type": "keyword"
+      },
+      "extnRemitToId": {
+        "type": "keyword"
+      },
+      "extnSalesPerson": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "normalizer": "lowercase_normalizer"
+          },
+          "ngram": {
+            "type": "text",
+            "analyzer": "ngram_analyzer",
+            "search_analyzer": "search_analyzer"
+          }
+        }
+      },
+      "extnShippingPreference": {
+        "type": "keyword"
+      },
+      "extnThresholdPercentage": {
+        "type": "keyword"
+      },
+      "extnTimeLimit": {
+        "type": "keyword"
+      },
+      "indexedAt": {
+        "type": "date",
+        "format": "epoch_millis"
+      },
+      "inventoryOrganizationCode": {
+        "type": "keyword"
+      },
+      "isBuyer": {
+        "type": "keyword"
+      },
+      "isCarrier": {
+        "type": "keyword"
+      },
+      "isEnterprise": {
+        "type": "keyword"
+      },
+      "isHubOrganization": {
+        "type": "keyword"
+      },
+      "isLegalEntity": {
+        "type": "keyword"
+      },
+      "isNode": {
+        "type": "keyword"
+      },
+      "isSeller": {
+        "type": "keyword"
+      },
+      "issuingAuthority": {
+        "type": "keyword"
+      },
+      "localeCode": {
+        "type": "keyword"
+      },
+      "modifiedTimestamp": {
+        "type": "date",
+        "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd'T'HH:mm:ss||epoch_millis"
+      },
+      "organizationCode": {
+        "type": "keyword",
+        "copy_to": [
+          "organizationCodeSearchable",
+          "searchableText"
+        ]
+      },
+      "organizationCodeSearchable": {
+        "type": "text",
+        "analyzer": "ngram_analyzer",
+        "search_analyzer": "search_analyzer"
+      },
+      "organizationKey": {
+        "type": "keyword",
+        "copy_to": [
+          "searchableText"
+        ]
+      },
+      "organizationName": {
+        "type": "text",
+        "fields": {
+          "autocomplete": {
+            "type": "text",
+            "analyzer": "edge_ngram_analyzer",
+            "search_analyzer": "search_analyzer"
+          },
+          "keyword": {
+            "type": "keyword",
+            "normalizer": "lowercase_normalizer"
+          },
+          "ngram": {
+            "type": "text",
+            "analyzer": "ngram_analyzer",
+            "search_analyzer": "search_analyzer"
+          }
+        },
+        "copy_to": [
+          "searchableText"
+        ]
+      },
+      "parentOrganizationCode": {
+        "type": "keyword",
+        "copy_to": [
+          "searchableText"
+        ]
+      },
+      "pricingOrganizationCode": {
+        "type": "keyword"
+      },
+      "primaryEnterpriseKey": {
+        "type": "keyword"
+      },
+      "primarySicCode": {
+        "type": "keyword"
+      },
+      "primaryUrl": {
+        "type": "keyword",
+        "index": false
+      },
+      "resourceIdentifier": {
+        "type": "keyword"
+      },
+      "searchableText": {
+        "type": "text",
+        "analyzer": "ngram_analyzer",
+        "search_analyzer": "search_analyzer"
+      },
+      "shipTo": {
+        "properties": {
+          "addressLine1": {
+            "type": "text"
+          },
+          "addressLine2": {
+            "type": "text"
+          },
+          "addressLine3": {
+            "type": "text"
+          },
+          "addressLine4": {
+            "type": "text"
+          },
+          "addressLine5": {
+            "type": "text"
+          },
+          "addressLine6": {
+            "type": "text"
+          },
+          "city": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "normalizer": "lowercase_normalizer"
+              }
+            }
+          },
+          "company": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "normalizer": "lowercase_normalizer"
+              }
+            }
+          },
+          "country": {
+            "type": "keyword"
+          },
+          "dayPhone": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword"
+              },
+              "normalized": {
+                "type": "text",
+                "analyzer": "phone_analyzer"
+              }
+            }
+          },
+          "emailId": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "normalizer": "lowercase_normalizer"
+              },
+              "ngram": {
+                "type": "text",
+                "analyzer": "ngram_analyzer",
+                "search_analyzer": "search_analyzer"
+              }
+            },
+            "analyzer": "email_analyzer"
+          },
+          "eveningPhone": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword"
+              },
+              "normalized": {
+                "type": "text",
+                "analyzer": "phone_analyzer"
+              }
+            }
+          },
+          "firstName": {
+            "type": "keyword"
+          },
+          "fullName": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "normalizer": "lowercase_normalizer"
+              },
+              "ngram": {
+                "type": "text",
+                "analyzer": "ngram_analyzer",
+                "search_analyzer": "search_analyzer"
+              }
+            }
+          },
+          "lastName": {
+            "type": "keyword"
+          },
+          "mobilePhone": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword"
+              },
+              "normalized": {
+                "type": "text",
+                "analyzer": "phone_analyzer"
+              }
+            }
+          },
+          "personInfoKey": {
+            "type": "keyword"
+          },
+          "state": {
+            "type": "keyword"
+          },
+          "zipCode": {
+            "type": "keyword"
+          }
+        }
+      },
+      "soldTo": {
+        "properties": {
+          "addressLine1": {
+            "type": "text"
+          },
+          "addressLine2": {
+            "type": "text"
+          },
+          "addressLine3": {
+            "type": "text"
+          },
+          "addressLine4": {
+            "type": "text"
+          },
+          "addressLine5": {
+            "type": "text"
+          },
+          "addressLine6": {
+            "type": "text"
+          },
+          "city": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "normalizer": "lowercase_normalizer"
+              }
+            }
+          },
+          "company": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "normalizer": "lowercase_normalizer"
+              }
+            }
+          },
+          "country": {
+            "type": "keyword"
+          },
+          "dayPhone": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword"
+              },
+              "normalized": {
+                "type": "text",
+                "analyzer": "phone_analyzer"
+              }
+            }
+          },
+          "emailId": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "normalizer": "lowercase_normalizer"
+              },
+              "ngram": {
+                "type": "text",
+                "analyzer": "ngram_analyzer",
+                "search_analyzer": "search_analyzer"
+              }
+            },
+            "analyzer": "email_analyzer"
+          },
+          "eveningPhone": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword"
+              },
+              "normalized": {
+                "type": "text",
+                "analyzer": "phone_analyzer"
+              }
+            }
+          },
+          "firstName": {
+            "type": "keyword"
+          },
+          "fullName": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "normalizer": "lowercase_normalizer"
+              },
+              "ngram": {
+                "type": "text",
+                "analyzer": "ngram_analyzer",
+                "search_analyzer": "search_analyzer"
+              }
+            }
+          },
+          "lastName": {
+            "type": "keyword"
+          },
+          "mobilePhone": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword"
+              },
+              "c": {
+                "type": "text",
+                "analyzer": "phone_analyzer"
+              }
+            }
+          },
+          "personInfoKey": {
+            "type": "keyword"
+          },
+          "state": {
+            "type": "keyword"
+          },
+          "zipCode": {
+            "type": "keyword"
+          }
+        }
+      },
+      "statementEmail": {
+        "type": "keyword"
+      },
+      "taxExemptFlag": {
+        "type": "keyword"
+      },
+      "taxExemptionCertificate": {
+        "type": "keyword"
+      },
+      "taxJurisdiction": {
+        "type": "keyword"
+      },
+      "taxpayerId": {
+        "type": "keyword",
+        "copy_to": [
+          "searchableText"
+        ]
+      },
+      "xrefOrganizationCode": {
+        "type": "keyword"
+      }
+    }
+  }
+}

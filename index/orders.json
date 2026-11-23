@@ -1,0 +1,912 @@
+{
+  "settings": {
+    "index": {
+      "number_of_shards": 4,
+      "number_of_replicas": 1,
+      "refresh_interval": "1s",
+      "max_ngram_diff": 14
+    },
+    "analysis": {
+      "tokenizer": {
+        "ngram_tokenizer": {
+          "type": "ngram",
+          "min_gram": 3,
+          "max_gram": 17,
+          "token_chars": [
+            "letter",
+            "digit"
+          ]
+        },
+        "edge_ngram_tokenizer": {
+          "type": "edge_ngram",
+          "min_gram": 2,
+          "max_gram": 16,
+          "token_chars": [
+            "letter",
+            "digit"
+          ]
+        }
+      },
+      "analyzer": {
+        "ngram_analyzer": {
+          "type": "custom",
+          "tokenizer": "ngram_tokenizer",
+          "filter": [
+            "lowercase"
+          ]
+        },
+        "edge_ngram_analyzer": {
+          "type": "custom",
+          "tokenizer": "edge_ngram_tokenizer",
+          "filter": [
+            "lowercase"
+          ]
+        },
+        "search_analyzer": {
+          "type": "custom",
+          "tokenizer": "standard",
+          "filter": [
+            "lowercase"
+          ]
+        },
+        "phone_analyzer": {
+          "type": "custom",
+          "tokenizer": "keyword",
+          "char_filter": [
+            "phone_char_filter"
+          ],
+          "filter": [
+            "lowercase"
+          ]
+        },
+        "order_no_analyzer": {
+          "type": "custom",
+          "tokenizer": "keyword",
+          "char_filter": [
+            "order_no_char_filter"
+          ],
+          "filter": [
+            "lowercase"
+          ]
+        },
+        "email_analyzer": {
+          "type": "custom",
+          "tokenizer": "uax_url_email",
+          "filter": [
+            "lowercase"
+          ]
+        }
+      },
+      "char_filter": {
+        "phone_char_filter": {
+          "type": "pattern_replace",
+          "pattern": "[^0-9]",
+          "replacement": ""
+        },
+        "order_no_char_filter": {
+          "type": "pattern_replace",
+          "pattern": "[^a-zA-Z0-9]",
+          "replacement": ""
+        }
+      },
+      "normalizer": {
+        "lowercase_normalizer": {
+          "type": "custom",
+          "filter": [
+            "lowercase",
+            "asciifolding"
+          ]
+        }
+      }
+    }
+  },
+  "mappings": {
+    "properties": {
+      "_deleted": {
+        "type": "boolean"
+      },
+      "_deletedAt": {
+        "type": "date",
+        "format": "epoch_millis"
+      },
+      "orderHeaderKey": {
+        "type": "keyword"
+      },
+      "enterpriseKey": {
+        "type": "keyword"
+      },
+      "orderNo": {
+        "type": "keyword",
+        "copy_to": "searchableText",
+        "fields": {
+          "normalized": {
+            "type": "text",
+            "analyzer": "order_no_analyzer"
+          }
+        }
+      },
+      "documentType": {
+        "type": "keyword"
+      },
+      "chainType": {
+        "type": "keyword"
+      },
+      "extnPreferredDc": {
+        "type": "keyword"
+      },
+      "buyerOrganizationCode": {
+        "type": "keyword"
+      },
+      "sellerOrganizationCode": {
+        "type": "keyword"
+      },
+      "billToKey": {
+        "type": "keyword"
+      },
+      "billToId": {
+        "type": "keyword"
+      },
+      "shipToKey": {
+        "type": "keyword"
+      },
+      "soldToKey": {
+        "type": "keyword"
+      },
+      "contactKey": {
+        "type": "keyword"
+      },
+      "priceProgramKey": {
+        "type": "keyword"
+      },
+      "scac": {
+        "type": "keyword"
+      },
+      "carrierServiceCode": {
+        "type": "keyword"
+      },
+      "termsCode": {
+        "type": "keyword"
+      },
+      "division": {
+        "type": "keyword"
+      },
+      "draftOrderFlag": {
+        "type": "keyword"
+      },
+      "holdFlag": {
+        "type": "keyword"
+      },
+      "holdTypeStatuses": {
+        "type": "flat_object"
+      },
+      "holdReasonCode": {
+        "type": "keyword"
+      },
+      "orderPurpose": {
+        "type": "keyword"
+      },
+      "paymentStatus": {
+        "type": "keyword"
+      },
+      "orderType": {
+        "type": "keyword"
+      },
+      "currency": {
+        "type": "keyword"
+      },
+      "orderDate": {
+        "type": "date",
+        "format": "yyyy-MM-dd HH:mm:ss.SSS||yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis"
+      },
+      "reqDeliveryDate": {
+        "type": "date",
+        "format": "yyyy-MM-dd HH:mm:ss.SSS||yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis"
+      },
+      "reqCancelDate": {
+        "type": "date",
+        "format": "yyyy-MM-dd HH:mm:ss.SSS||yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis"
+      },
+      "reqShipDate": {
+        "type": "date",
+        "format": "yyyy-MM-dd HH:mm:ss.SSS||yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis"
+      },
+      "createdTimestamp": {
+        "type": "date",
+        "format": "yyyy-MM-dd HH:mm:ss.SSS||yyyy-MM-dd HH:mm:ss||yyyy-MM-dd'T'HH:mm:ss||epoch_millis"
+      },
+      "modifiedTimestamp": {
+        "type": "date",
+        "format": "yyyy-MM-dd HH:mm:ss.SSS||yyyy-MM-dd HH:mm:ss||yyyy-MM-dd'T'HH:mm:ss||epoch_millis"
+      },
+      "totalAmount": {
+        "type": "double"
+      },
+      "originalTotalAmount": {
+        "type": "double"
+      },
+      "tax": {
+        "type": "double"
+      },
+      "originalTax": {
+        "type": "double"
+      },
+      "totalAdjustmentAmount": {
+        "type": "double"
+      },
+      "enterpriseCurrency": {
+        "type": "keyword"
+      },
+      "sellerOrgNameHash": {
+        "type": "keyword",
+        "index": false
+      },
+      "buyerOrgNameHash": {
+        "type": "keyword",
+        "index": false
+      },
+      "orderName": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "orderStatus": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "normalizer": "lowercase_normalizer"
+          }
+        }
+      },
+      "statusCode": {
+        "type": "keyword"
+      },
+      "statusName": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "sellerOrganizationName": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "normalizer": "lowercase_normalizer"
+          }
+        }
+      },
+      "buyerOrganizationName": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "normalizer": "lowercase_normalizer"
+          }
+        }
+      },
+      "billTo": {
+        "type": "object",
+        "properties": {
+          "personInfoKey": {
+            "type": "keyword"
+          },
+          "firstName": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "normalizer": "lowercase_normalizer"
+              },
+              "ngram": {
+                "type": "text",
+                "analyzer": "ngram_analyzer",
+                "search_analyzer": "search_analyzer"
+              },
+              "autocomplete": {
+                "type": "text",
+                "analyzer": "edge_ngram_analyzer",
+                "search_analyzer": "search_analyzer"
+              }
+            }
+          },
+          "lastName": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "normalizer": "lowercase_normalizer"
+              },
+              "ngram": {
+                "type": "text",
+                "analyzer": "ngram_analyzer",
+                "search_analyzer": "search_analyzer"
+              },
+              "autocomplete": {
+                "type": "text",
+                "analyzer": "edge_ngram_analyzer",
+                "search_analyzer": "search_analyzer"
+              }
+            }
+          },
+          "middleName": {
+            "type": "text"
+          },
+          "fullName": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "normalizer": "lowercase_normalizer"
+              },
+              "ngram": {
+                "type": "text",
+                "analyzer": "ngram_analyzer",
+                "search_analyzer": "search_analyzer"
+              }
+            }
+          },
+          "emailId": {
+            "type": "text",
+            "analyzer": "email_analyzer",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "normalizer": "lowercase_normalizer"
+              },
+              "ngram": {
+                "type": "text",
+                "analyzer": "ngram_analyzer",
+                "search_analyzer": "search_analyzer"
+              }
+            }
+          },
+          "dayPhone": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword"
+              },
+              "normalized": {
+                "type": "text",
+                "analyzer": "phone_analyzer"
+              }
+            }
+          },
+          "eveningPhone": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword"
+              },
+              "normalized": {
+                "type": "text",
+                "analyzer": "phone_analyzer"
+              }
+            }
+          },
+          "mobilePhone": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword"
+              },
+              "normalized": {
+                "type": "text",
+                "analyzer": "phone_analyzer"
+              }
+            }
+          },
+          "company": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "normalizer": "lowercase_normalizer"
+              }
+            }
+          },
+          "addressLine1": {
+            "type": "text"
+          },
+          "addressLine2": {
+            "type": "text"
+          },
+          "addressLine3": {
+            "type": "text"
+          },
+          "addressLine4": {
+            "type": "text"
+          },
+          "addressLine5": {
+            "type": "text"
+          },
+          "addressLine6": {
+            "type": "text"
+          },
+          "city": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "normalizer": "lowercase_normalizer"
+              }
+            }
+          },
+          "state": {
+            "type": "keyword"
+          },
+          "zipCode": {
+            "type": "keyword"
+          },
+          "country": {
+            "type": "keyword"
+          }
+        }
+      },
+      "shipTo": {
+        "type": "object",
+        "properties": {
+          "personInfoKey": {
+            "type": "keyword"
+          },
+          "firstName": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "normalizer": "lowercase_normalizer"
+              },
+              "ngram": {
+                "type": "text",
+                "analyzer": "ngram_analyzer",
+                "search_analyzer": "search_analyzer"
+              },
+              "autocomplete": {
+                "type": "text",
+                "analyzer": "edge_ngram_analyzer",
+                "search_analyzer": "search_analyzer"
+              }
+            }
+          },
+          "lastName": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "normalizer": "lowercase_normalizer"
+              },
+              "ngram": {
+                "type": "text",
+                "analyzer": "ngram_analyzer",
+                "search_analyzer": "search_analyzer"
+              },
+              "autocomplete": {
+                "type": "text",
+                "analyzer": "edge_ngram_analyzer",
+                "search_analyzer": "search_analyzer"
+              }
+            }
+          },
+          "middleName": {
+            "type": "text"
+          },
+          "fullName": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "normalizer": "lowercase_normalizer"
+              },
+              "ngram": {
+                "type": "text",
+                "analyzer": "ngram_analyzer",
+                "search_analyzer": "search_analyzer"
+              }
+            }
+          },
+          "emailId": {
+            "type": "text",
+            "analyzer": "email_analyzer",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "normalizer": "lowercase_normalizer"
+              },
+              "ngram": {
+                "type": "text",
+                "analyzer": "ngram_analyzer",
+                "search_analyzer": "search_analyzer"
+              }
+            }
+          },
+          "dayPhone": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword"
+              },
+              "normalized": {
+                "type": "text",
+                "analyzer": "phone_analyzer"
+              }
+            }
+          },
+          "eveningPhone": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword"
+              },
+              "normalized": {
+                "type": "text",
+                "analyzer": "phone_analyzer"
+              }
+            }
+          },
+          "mobilePhone": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword"
+              },
+              "normalized": {
+                "type": "text",
+                "analyzer": "phone_analyzer"
+              }
+            }
+          },
+          "company": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "normalizer": "lowercase_normalizer"
+              }
+            }
+          },
+          "addressLine1": {
+            "type": "text"
+          },
+          "addressLine2": {
+            "type": "text"
+          },
+          "addressLine3": {
+            "type": "text"
+          },
+          "addressLine4": {
+            "type": "text"
+          },
+          "addressLine5": {
+            "type": "text"
+          },
+          "addressLine6": {
+            "type": "text"
+          },
+          "city": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "normalizer": "lowercase_normalizer"
+              }
+            }
+          },
+          "state": {
+            "type": "keyword"
+          },
+          "zipCode": {
+            "type": "keyword"
+          },
+          "country": {
+            "type": "keyword"
+          }
+        }
+      },
+      "soldTo": {
+        "type": "object",
+        "properties": {
+          "personInfoKey": {
+            "type": "keyword"
+          },
+          "firstName": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "normalizer": "lowercase_normalizer"
+              },
+              "ngram": {
+                "type": "text",
+                "analyzer": "ngram_analyzer",
+                "search_analyzer": "search_analyzer"
+              },
+              "autocomplete": {
+                "type": "text",
+                "analyzer": "edge_ngram_analyzer",
+                "search_analyzer": "search_analyzer"
+              }
+            }
+          },
+          "lastName": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "normalizer": "lowercase_normalizer"
+              },
+              "ngram": {
+                "type": "text",
+                "analyzer": "ngram_analyzer",
+                "search_analyzer": "search_analyzer"
+              },
+              "autocomplete": {
+                "type": "text",
+                "analyzer": "edge_ngram_analyzer",
+                "search_analyzer": "search_analyzer"
+              }
+            }
+          },
+          "middleName": {
+            "type": "text"
+          },
+          "fullName": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "normalizer": "lowercase_normalizer"
+              },
+              "ngram": {
+                "type": "text",
+                "analyzer": "ngram_analyzer",
+                "search_analyzer": "search_analyzer"
+              }
+            }
+          },
+          "emailId": {
+            "type": "text",
+            "analyzer": "email_analyzer",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "normalizer": "lowercase_normalizer"
+              },
+              "ngram": {
+                "type": "text",
+                "analyzer": "ngram_analyzer",
+                "search_analyzer": "search_analyzer"
+              }
+            }
+          },
+          "dayPhone": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword"
+              },
+              "normalized": {
+                "type": "text",
+                "analyzer": "phone_analyzer"
+              }
+            }
+          },
+          "eveningPhone": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword"
+              },
+              "normalized": {
+                "type": "text",
+                "analyzer": "phone_analyzer"
+              }
+            }
+          },
+          "mobilePhone": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword"
+              },
+              "normalized": {
+                "type": "text",
+                "analyzer": "phone_analyzer"
+              }
+            }
+          },
+          "company": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "normalizer": "lowercase_normalizer"
+              }
+            }
+          },
+          "addressLine1": {
+            "type": "text"
+          },
+          "addressLine2": {
+            "type": "text"
+          },
+          "addressLine3": {
+            "type": "text"
+          },
+          "addressLine4": {
+            "type": "text"
+          },
+          "addressLine5": {
+            "type": "text"
+          },
+          "addressLine6": {
+            "type": "text"
+          },
+          "city": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "normalizer": "lowercase_normalizer"
+              }
+            }
+          },
+          "state": {
+            "type": "keyword"
+          },
+          "zipCode": {
+            "type": "keyword"
+          },
+          "country": {
+            "type": "keyword"
+          }
+        }
+      },
+      "customer": {
+        "type": "object",
+        "properties": {
+          "customerId": {
+            "type": "keyword"
+          },
+          "customerKey": {
+            "type": "keyword"
+          },
+          "customerType": {
+            "type": "keyword"
+          },
+          "organizationCode": {
+            "type": "keyword"
+          },
+          "organizationName": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "normalizer": "lowercase_normalizer"
+              }
+            }
+          },
+          "orgNameHash": {
+            "type": "keyword",
+            "index": false
+          },
+          "customerEmailId": {
+            "type": "text",
+            "analyzer": "email_analyzer",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "normalizer": "lowercase_normalizer"
+              },
+              "ngram": {
+                "type": "text",
+                "analyzer": "ngram_analyzer",
+                "search_analyzer": "search_analyzer"
+              }
+            }
+          },
+          "customerFirstName": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "normalizer": "lowercase_normalizer"
+              },
+              "ngram": {
+                "type": "text",
+                "analyzer": "ngram_analyzer",
+                "search_analyzer": "search_analyzer"
+              },
+              "autocomplete": {
+                "type": "text",
+                "analyzer": "edge_ngram_analyzer",
+                "search_analyzer": "search_analyzer"
+              }
+            }
+          },
+          "customerLastName": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "normalizer": "lowercase_normalizer"
+              },
+              "ngram": {
+                "type": "text",
+                "analyzer": "ngram_analyzer",
+                "search_analyzer": "search_analyzer"
+              },
+              "autocomplete": {
+                "type": "text",
+                "analyzer": "edge_ngram_analyzer",
+                "search_analyzer": "search_analyzer"
+              }
+            }
+          },
+          "customerFullName": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "normalizer": "lowercase_normalizer"
+              },
+              "ngram": {
+                "type": "text",
+                "analyzer": "ngram_analyzer",
+                "search_analyzer": "search_analyzer"
+              }
+            }
+          },
+          "customerPhoneNo": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword"
+              },
+              "normalized": {
+                "type": "text",
+                "analyzer": "phone_analyzer"
+              }
+            }
+          },
+          "customerPoNo": {
+            "type": "keyword"
+          },
+          "customerZipCode": {
+            "type": "keyword"
+          },
+          "customerRewardsNo": {
+            "type": "keyword"
+          }
+        }
+      },
+      "invoiceNo": {
+        "type": "keyword"
+      },
+      "shipmentStatus": {
+        "type": "keyword"
+      },
+      "searchableText": {
+        "type": "text",
+        "analyzer": "ngram_analyzer",
+        "search_analyzer": "search_analyzer"
+      },
+      "cdcOperation": {
+        "type": "keyword"
+      },
+      "cdcTimestamp": {
+        "type": "date",
+        "format": "epoch_millis"
+      },
+      "indexedAt": {
+        "type": "date",
+        "format": "epoch_millis"
+      }
+    }
+  }
+}

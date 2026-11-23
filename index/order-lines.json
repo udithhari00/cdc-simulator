@@ -1,0 +1,539 @@
+{
+  "settings": {
+    "index": {
+      "number_of_shards": 4,
+      "number_of_replicas": 1,
+      "refresh_interval": "10s",
+      "max_ngram_diff": 14
+    },
+    "analysis": {
+      "tokenizer": {
+        "ngram_tokenizer": {
+          "type": "ngram",
+          "min_gram": 3,
+          "max_gram": 17,
+          "token_chars": [
+            "letter",
+            "digit"
+          ]
+        },
+        "edge_ngram_tokenizer": {
+          "type": "edge_ngram",
+          "min_gram": 2,
+          "max_gram": 16,
+          "token_chars": [
+            "letter",
+            "digit"
+          ]
+        },
+        "sku_tokenizer": {
+          "type": "ngram",
+          "min_gram": 2,
+          "max_gram": 10,
+          "token_chars": [
+            "letter",
+            "digit",
+            "symbol",
+            "punctuation"
+          ]
+        }
+      },
+      "analyzer": {
+        "ngram_analyzer": {
+          "type": "custom",
+          "tokenizer": "ngram_tokenizer",
+          "filter": [
+            "lowercase"
+          ]
+        },
+        "edge_ngram_analyzer": {
+          "type": "custom",
+          "tokenizer": "edge_ngram_tokenizer",
+          "filter": [
+            "lowercase"
+          ]
+        },
+        "sku_analyzer": {
+          "type": "custom",
+          "tokenizer": "sku_tokenizer",
+          "filter": [
+            "lowercase"
+          ]
+        },
+        "search_analyzer": {
+          "type": "custom",
+          "tokenizer": "standard",
+          "filter": [
+            "lowercase"
+          ]
+        },
+        "description_analyzer": {
+          "type": "custom",
+          "tokenizer": "standard",
+          "filter": [
+            "lowercase",
+            "porter_stem",
+            "english_stop"
+          ]
+        }
+      },
+      "filter": {
+        "english_stop": {
+          "type": "stop",
+          "stopwords": "_english_"
+        }
+      },
+      "normalizer": {
+        "lowercase_normalizer": {
+          "type": "custom",
+          "filter": [
+            "lowercase",
+            "asciifolding"
+          ]
+        }
+      }
+    }
+  },
+  "mappings": {
+    "properties": {
+      "_deleted": {
+        "type": "boolean"
+      },
+      "_deletedAt": {
+        "type": "date",
+        "format": "epoch_millis"
+      },
+      "orderLineKey": {
+        "type": "keyword"
+      },
+      "orderHeaderKey": {
+        "type": "keyword"
+      },
+      "primeLineNo": {
+        "type": "integer"
+      },
+      "subLineNo": {
+        "type": "integer"
+      },
+      "lineSeqNo": {
+        "type": "keyword"
+      },
+      "lineType": {
+        "type": "keyword"
+      },
+      "orderClass": {
+        "type": "keyword"
+      },
+      "itemId": {
+        "type": "keyword",
+        "copy_to": "itemIdSearchable"
+      },
+      "itemIdSearchable": {
+        "type": "text",
+        "analyzer": "sku_analyzer",
+        "search_analyzer": "search_analyzer"
+      },
+      "alternateItemId": {
+        "type": "keyword"
+      },
+      "uom": {
+        "type": "keyword"
+      },
+      "productClass": {
+        "type": "keyword",
+        "copy_to": "searchableText"
+      },
+      "productLine": {
+        "type": "keyword",
+        "copy_to": "searchableText"
+      },
+      "itemDescription": {
+        "type": "text",
+        "analyzer": "description_analyzer",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          },
+          "ngram": {
+            "type": "text",
+            "analyzer": "ngram_analyzer",
+            "search_analyzer": "search_analyzer"
+          }
+        }
+      },
+      "itemShortDescription": {
+        "type": "text",
+        "analyzer": "description_analyzer",
+        "fields": {
+          "ngram": {
+            "type": "text",
+            "analyzer": "ngram_analyzer",
+            "search_analyzer": "search_analyzer"
+          }
+        }
+      },
+      "upcCode": {
+        "type": "keyword",
+        "copy_to": "upcCodeSearchable"
+      },
+      "upcCodeSearchable": {
+        "type": "text",
+        "analyzer": "sku_analyzer",
+        "search_analyzer": "search_analyzer"
+      },
+      "manufacturerName": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "normalizer": "lowercase_normalizer"
+          },
+          "ngram": {
+            "type": "text",
+            "analyzer": "ngram_analyzer",
+            "search_analyzer": "search_analyzer"
+          },
+          "autocomplete": {
+            "type": "text",
+            "analyzer": "edge_ngram_analyzer",
+            "search_analyzer": "search_analyzer"
+          }
+        }
+      },
+      "manufacturerItem": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          },
+          "ngram": {
+            "type": "text",
+            "analyzer": "ngram_analyzer",
+            "search_analyzer": "search_analyzer"
+          }
+        }
+      },
+      "customerItem": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          },
+          "ngram": {
+            "type": "text",
+            "analyzer": "ngram_analyzer",
+            "search_analyzer": "search_analyzer"
+          }
+        }
+      },
+      "customerItemDescription": {
+        "type": "text",
+        "analyzer": "description_analyzer"
+      },
+      "supplierItem": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "supplierItemDescription": {
+        "type": "text",
+        "analyzer": "description_analyzer"
+      },
+      "supplierCode": {
+        "type": "keyword"
+      },
+      "countryOfOrigin": {
+        "type": "keyword"
+      },
+      "unitPrice": {
+        "type": "double"
+      },
+      "listPrice": {
+        "type": "double"
+      },
+      "retailPrice": {
+        "type": "double"
+      },
+      "unitCost": {
+        "type": "double"
+      },
+      "costCurrency": {
+        "type": "keyword"
+      },
+      "discountPercentage": {
+        "type": "double"
+      },
+      "discountType": {
+        "type": "keyword"
+      },
+      "discountReference": {
+        "type": "keyword"
+      },
+      "otherCharges": {
+        "type": "double"
+      },
+      "lineTotal": {
+        "type": "double"
+      },
+      "invoicedLineTotal": {
+        "type": "double"
+      },
+      "invoicedExtendedPrice": {
+        "type": "double"
+      },
+      "tax": {
+        "type": "double"
+      },
+      "orderedQty": {
+        "type": "double"
+      },
+      "originalOrderedQty": {
+        "type": "double"
+      },
+      "committedQuantity": {
+        "type": "double"
+      },
+      "shippedQuantity": {
+        "type": "double"
+      },
+      "invoicedQuantity": {
+        "type": "double"
+      },
+      "receivedQuantity": {
+        "type": "double"
+      },
+      "settledQuantity": {
+        "type": "double"
+      },
+      "settledAmount": {
+        "type": "double"
+      },
+      "fillQuantity": {
+        "type": "double"
+      },
+      "splitQty": {
+        "type": "double"
+      },
+      "shipnodeKey": {
+        "type": "keyword"
+      },
+      "shipToKey": {
+        "type": "keyword"
+      },
+      "shipToId": {
+        "type": "keyword"
+      },
+      "scac": {
+        "type": "keyword"
+      },
+      "carrierServiceCode": {
+        "type": "keyword"
+      },
+      "trackingInfo": {
+        "type": "nested",
+        "properties": {
+          "trackingNo": {
+            "type": "keyword"
+          },
+          "scac": {
+            "type": "keyword"
+          },
+          "carrierServiceCode": {
+            "type": "keyword"
+          }
+        }
+      },
+      "carrierAccountNo": {
+        "type": "keyword"
+      },
+      "deliveryMethod": {
+        "type": "keyword"
+      },
+      "deliveryCode": {
+        "type": "keyword"
+      },
+      "fulfillmentType": {
+        "type": "keyword"
+      },
+      "reqDeliveryDate": {
+        "type": "date",
+        "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis"
+      },
+      "reqCancelDate": {
+        "type": "date",
+        "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis"
+      },
+      "reqShipDate": {
+        "type": "date",
+        "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis"
+      },
+      "earliestShipDate": {
+        "type": "date",
+        "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis"
+      },
+      "earliestDeliveryDate": {
+        "type": "date",
+        "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis"
+      },
+      "pricingDate": {
+        "type": "date",
+        "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis"
+      },
+      "promisedApptStartDate": {
+        "type": "date",
+        "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis"
+      },
+      "promisedApptEndDate": {
+        "type": "date",
+        "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis"
+      },
+      "holdFlag": {
+        "type": "keyword"
+      },
+      "holdReasonCode": {
+        "type": "keyword"
+      },
+      "pickableFlag": {
+        "type": "keyword"
+      },
+      "taxableFlag": {
+        "type": "keyword"
+      },
+      "giftFlag": {
+        "type": "keyword"
+      },
+      "invoiceComplete": {
+        "type": "keyword"
+      },
+      "isPriceLocked": {
+        "type": "keyword"
+      },
+      "kitCode": {
+        "type": "keyword"
+      },
+      "customerPoNo": {
+        "type": "keyword",
+        "copy_to": "customerPoNoSearchable"
+      },
+      "customerPoNoSearchable": {
+        "type": "text",
+        "analyzer": "ngram_analyzer",
+        "search_analyzer": "search_analyzer"
+      },
+      "customerPoLineNo": {
+        "type": "keyword"
+      },
+      "departmentCode": {
+        "type": "keyword"
+      },
+      "segment": {
+        "type": "keyword"
+      },
+      "segmentType": {
+        "type": "keyword"
+      },
+      "itemWeight": {
+        "type": "double"
+      },
+      "itemWeightUom": {
+        "type": "keyword"
+      },
+      "returnReason": {
+        "type": "keyword"
+      },
+      "sourceFromOrganization": {
+        "type": "keyword"
+      },
+      "receivingNode": {
+        "type": "keyword"
+      },
+      "harmonizedCode": {
+        "type": "keyword"
+      },
+      "serialNo": {
+        "type": "keyword"
+      },
+      "extnPlannerName": {
+        "type": "keyword"
+      },
+      "extnReqDropShip": {
+        "type": "keyword"
+      },
+      "chainedFromOrderLineKey": {
+        "type": "keyword"
+      },
+      "chainedFromOrderHeaderKey": {
+        "type": "keyword"
+      },
+      "derivedFromOrderLineKey": {
+        "type": "keyword"
+      },
+      "derivedFromOrderHeaderKey": {
+        "type": "keyword"
+      },
+      "statusName": {
+        "type": "keyword"
+      },
+      "statusCode": {
+        "type": "keyword"
+      },
+      "holdTypeStatuses": {
+        "type": "flat_object"
+      },
+      "order": {
+        "type": "object",
+        "properties": {
+          "documentType": {
+            "type": "keyword"
+          },
+          "draftOrderFlag": {
+            "type": "keyword"
+          },
+          "customerId": {
+            "type": "keyword"
+          },
+          "orderNo": {
+            "type": "keyword"
+          },
+          "orderDate": {
+            "type": "date",
+            "format": "yyyy-MM-dd HH:mm:ss.SSS||yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis"
+          }
+        }
+      },
+      "searchableText": {
+        "type": "text",
+        "analyzer": "ngram_analyzer",
+        "search_analyzer": "search_analyzer"
+      },
+      "createdTimestamp": {
+        "type": "date",
+        "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd'T'HH:mm:ss||epoch_millis"
+      },
+      "modifiedTimestamp": {
+        "type": "date",
+        "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd'T'HH:mm:ss||epoch_millis"
+      },
+      "createUserId": {
+        "type": "keyword"
+      },
+      "modifyUserId": {
+        "type": "keyword"
+      },
+      "cdcOperation": {
+        "type": "keyword"
+      },
+      "cdcTimestamp": {
+        "type": "date",
+        "format": "epoch_millis"
+      },
+      "indexedAt": {
+        "type": "date",
+        "format": "epoch_millis"
+      }
+    }
+  }
+}
